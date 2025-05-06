@@ -26,8 +26,11 @@ Abrir la carpeta en VisualStudioCode
 paso 3:
 Abrir la terminal en VisualStudioCode
 paso4:
-colocar el comando:
+colocar los comandos en el mismo orden:
+
+    "npm install --legacy-peer-deps"
     "npm run dev"
+
 paso 5:
 dar click en el link que muestra
    - Local:        http://localhost:3000
