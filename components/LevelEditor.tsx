@@ -11,10 +11,12 @@ interface LevelEditorProps {
   blocks: EditorBlock[]
   platformCount: number
   orderType: OrderType
+  instructions: string // ← AGREGADO: Prop para instrucciones
   previewBlock: { x: number; y: number; size: number } | null
-  svgRef: React.RefObject<SVGSVGElement>
+  svgRef: React.RefObject<SVGSVGElement | null>
   onPlatformCountChange: (count: number) => void
   onOrderTypeChange: (type: OrderType) => void
+  onInstructionsChange: (instructions: string) => void // ← AGREGADO: Prop para cambiar instrucciones
   onMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void
   onMouseMove: (e: React.MouseEvent<SVGSVGElement>) => void
   onMouseUp: (e: React.MouseEvent<SVGSVGElement>) => void
@@ -27,10 +29,12 @@ export function LevelEditor({
   blocks,
   platformCount,
   orderType,
+  instructions, // ← AGREGADO: Recibir instrucciones
   previewBlock,
   svgRef,
   onPlatformCountChange,
   onOrderTypeChange,
+  onInstructionsChange, // ← AGREGADO: Recibir función de cambio
   onMouseDown,
   onMouseMove,
   onMouseUp,
@@ -79,6 +83,19 @@ export function LevelEditor({
                 <option value="size">Tamaño</option>
               </select>
             </div>
+
+            {/* ← AGREGADO: Campo de instrucciones */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium">Instrucciones del Nivel</label>
+              <textarea
+                value={instructions}
+                onChange={(e) => onInstructionsChange(e.target.value)}
+                placeholder="Escribe las instrucciones para este nivel..."
+                className="w-64 h-20 px-2 py-1 text-black rounded resize-none text-sm"
+                maxLength={150}
+              />
+              <span className="text-xs text-gray-300">{instructions.length}/150 caracteres</span>
+            </div>
           </div>
         </div>
       </div>
@@ -98,15 +115,7 @@ export function LevelEditor({
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
           >
-            {/* Me designe a no tenerte mas nunca
-              Y solamente a tus fotos yo ver
-              Aunque cada dia te veo mas bonita
-              Eres problema y ya no me quiero meter
-              Tu ya sabes como enredarme
-              Cada vez que quieres
-              La vuelta buscarme*/}
-
-              
+            {/* Platforms */}
             {platforms.map((platform, index) => (
               <rect
                 key={index}
@@ -118,8 +127,7 @@ export function LevelEditor({
               />
             ))}
 
-            
-            {/* BLOQUES*/}
+            {/* Existing Blocks */}
             {blocks.map((block) => (
               <g key={block.id}>
                 <rect

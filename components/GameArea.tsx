@@ -4,15 +4,32 @@ import { GAME_CONFIG, PLATFORMS } from "../constants/game"
 interface GameAreaProps {
   crane: Crane
   blocks: Block[]
+  instructions?: string // ← AGREGADO: Prop opcional para instrucciones
 }
 
-export function GameArea({ crane, blocks }: GameAreaProps) {
+export function GameArea({ crane, blocks, instructions }: GameAreaProps) {
   return (
     <div
       className="relative bg-gray-200 border-4 border-black"
       style={{ width: GAME_CONFIG.GAME_WIDTH, height: GAME_CONFIG.GAME_HEIGHT }}
     >
       <svg width={GAME_CONFIG.GAME_WIDTH} height={GAME_CONFIG.GAME_HEIGHT} className="absolute inset-0">
+        {/* ← AGREGADO: Mostrar instrucciones en la parte superior */}
+        {instructions && (
+          <text
+            x={GAME_CONFIG.GAME_WIDTH / 2}
+            y="60"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize="16"
+            fontWeight="bold"
+            fill="#333"
+            className="select-none"
+          >
+            {instructions}
+          </text>
+        )}
+
         <rect x="0" y="140" width={GAME_CONFIG.GAME_WIDTH} height="10" fill="#333" />
 
         <g>

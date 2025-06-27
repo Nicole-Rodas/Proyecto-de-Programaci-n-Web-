@@ -10,6 +10,7 @@ export function useCraneGame() {
   const [mounted, setMounted] = useState(false)
   const [isCustomLevel, setIsCustomLevel] = useState(false)
   const [customOrderType, setCustomOrderType] = useState<string>("")
+  const [levelInstructions, setLevelInstructions] = useState<string>("") // ← AGREGADO: Estado para instrucciones del nivel
   const [crane, setCrane] = useState<Crane>({
     x: GAME_CONFIG.GAME_WIDTH / 2,
     y: GAME_CONFIG.CRANE_MIN_Y,
@@ -144,6 +145,7 @@ export function useCraneGame() {
 
     setIsCustomLevel(false)
     setCustomOrderType("")
+    setLevelInstructions("") // ← AGREGADO: Limpiar instrucciones
     setCrane({
       x: GAME_CONFIG.GAME_WIDTH / 2,
       y: GAME_CONFIG.CRANE_MIN_Y,
@@ -160,6 +162,7 @@ export function useCraneGame() {
 
       setIsCustomLevel(true)
       setCustomOrderType(level.orderType)
+      setLevelInstructions(level.instructions || "") // ← AGREGADO: Cargar instrucciones del nivel
 
       // Convert editor blocks to game blocks with labels
       const gameBlocks: Block[] = level.blocks.map((editorBlock) => ({
@@ -192,6 +195,7 @@ export function useCraneGame() {
     gameWon,
     mounted,
     isCustomLevel,
+    levelInstructions, // ← AGREGADO: Exportar instrucciones del nivel
     moveCrane,
     handleGrabRelease,
     resetGame,

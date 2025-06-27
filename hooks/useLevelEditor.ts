@@ -11,6 +11,7 @@ export function useLevelEditor() {
   const [blocks, setBlocks] = useState<EditorBlock[]>([])
   const [platformCount, setPlatformCount] = useState(3)
   const [orderType, setOrderType] = useState<OrderType>("numeric")
+  const [instructions, setInstructions] = useState("") // ← AGREGADO: Estado para instrucciones
   const [isDrawing, setIsDrawing] = useState(false)
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null)
   const [previewBlock, setPreviewBlock] = useState<{ x: number; y: number; size: number } | null>(null)
@@ -114,8 +115,11 @@ export function useLevelEditor() {
       }
 
       // Apply physics - find drop position
-      const tempBlocks = [...blocks]
-      const dropPosition = findDropPosition(newBlock.x + newBlock.width / 2, newBlock.y, newBlock, tempBlocks)
+      // Convertir EditorBlocks a Blocks agregando isGrabbed
+      const tempBlocks = blocks.map((block) => ({ ...block, isGrabbed: false }))
+      // Crear un bloque temporal con la propiedad isGrabbed para la función de colisión
+      const tempBlock = { ...newBlock, isGrabbed: false }
+      const dropPosition = findDropPosition(newBlock.x + newBlock.width / 2, newBlock.y, tempBlock, tempBlocks)
 
       newBlock.x = dropPosition.x
       newBlock.y = dropPosition.y
@@ -157,6 +161,7 @@ export function useLevelEditor() {
       platforms: platformCount,
       blocks,
       orderType,
+      instructions, // ← AGREGADO: Incluir instrucciones al guardar
       createdAt: new Date(),
     }
 
@@ -166,11 +171,12 @@ export function useLevelEditor() {
     localStorage.setItem("customLevels", JSON.stringify(savedLevels))
 
     alert("¡Nivel creado correctamente!")
-  }, [blocks, platformCount, orderType])
+  }, [blocks, platformCount, orderType, instructions]) // ← AGREGADO: instructions en dependencias
 
   const clearEditor = useCallback(() => {
     setBlocks([])
     setBlockHistory([])
+    setInstructions("") // ← AGREGADO: Limpiar instrucciones
     blockCounter.current = 0
   }, [])
 
@@ -186,11 +192,13 @@ export function useLevelEditor() {
     blocks,
     platformCount,
     orderType,
+    instructions, // ← AGREGADO: Exportar estado de instrucciones
     previewBlock,
     svgRef,
     toggleEditorMode,
     setPlatformCount,
     handleOrderTypeChange,
+    setInstructions, // ← AGREGADO: Exportar función para cambiar instrucciones
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,

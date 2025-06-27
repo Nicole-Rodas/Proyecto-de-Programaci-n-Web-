@@ -25,6 +25,7 @@ export default function CraneGame() {
     gameWon,
     mounted,
     isCustomLevel,
+    levelInstructions, // ← AGREGADO: Obtener instrucciones del nivel
     moveCrane,
     handleGrabRelease,
     resetGame,
@@ -36,11 +37,13 @@ export default function CraneGame() {
     blocks: editorBlocks,
     platformCount,
     orderType,
+    instructions, // ← AGREGADO: Obtener instrucciones del editor
     previewBlock,
     svgRef,
     toggleEditorMode,
     setPlatformCount,
     handleOrderTypeChange,
+    setInstructions, // ← AGREGADO: Obtener función para cambiar instrucciones
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
@@ -144,10 +147,12 @@ export default function CraneGame() {
           blocks={editorBlocks}
           platformCount={platformCount}
           orderType={orderType}
+          instructions={instructions} // ← AGREGADO: Pasar instrucciones
           previewBlock={previewBlock}
           svgRef={svgRef}
           onPlatformCountChange={setPlatformCount}
           onOrderTypeChange={handleOrderTypeChange}
+          onInstructionsChange={setInstructions} // ← AGREGADO: Pasar función de cambio
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -170,7 +175,8 @@ export default function CraneGame() {
       <GameHeader onGrabRelease={handleGrabRelease} onMove={moveCrane} />
 
       <div className="relative">
-        <GameArea crane={crane} blocks={blocks} />
+        {/* ← AGREGADO: Pasar instrucciones del nivel al GameArea */}
+        <GameArea crane={crane} blocks={blocks} instructions={levelInstructions} />
         {gameWon && <WinModal onRestart={handleResetGame} />}
       </div>
 

@@ -16,6 +16,7 @@ export interface CustomLevel {
   platforms: number
   blocks: EditorBlock[]
   orderType: "numeric" | "alphabetic" | "size"
+  instructions: string // ← AGREGADO: Campo para instrucciones
   createdAt: Date
 }
 

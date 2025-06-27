@@ -1,22 +1,20 @@
-// app/layout.tsx
+import type { Metadata } from 'next'
+import './globals.css'
 
-import Header from "@/components/Header";  // Importamos el Header
-import "./globals.css";  // Asegúrate de que los estilos globales se mantengan
+export const metadata: Metadata = {
+  title: 'v0 App',
+  description: 'Created with v0',
+  generator: 'v0.dev',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;  // Este prop representa el contenido de cada página que se va a renderizar
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
-      <body>
-        {/* Renderizamos solo el Header en todas las páginas */}
-        <Header />
-
-        {/* Aquí se renderiza el contenido de cada página */}
-        <main>{children}</main>
-      </body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
-  );
+  )
 }
