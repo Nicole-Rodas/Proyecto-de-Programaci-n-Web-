@@ -1,63 +1,62 @@
-"use client"
+// LevelEditor.tsx actualizado para incluir un botón 'Eliminar Nivel'
+"use client";
 
-import type React from "react"
-
-import { Button } from "@/components/ui/button"
-import { Undo2, Save } from "lucide-react"
-import type { EditorBlock, OrderType } from "../types/editor"
-import { GAME_CONFIG } from "../constants/game"
+import type React from "react";
+import { Button } from "@/components/ui/button";
+import { Undo2, Save, Trash2 } from "lucide-react";
+import type { EditorBlock, OrderType } from "../types/editor";
+import { GAME_CONFIG } from "../constants/game";
 
 interface LevelEditorProps {
-  blocks: EditorBlock[]
-  platformCount: number
-  orderType: OrderType
-  instructions: string // ← AGREGADO: Prop para instrucciones
-  previewBlock: { x: number; y: number; size: number } | null
-  svgRef: React.RefObject<SVGSVGElement | null>
-  onPlatformCountChange: (count: number) => void
-  onOrderTypeChange: (type: OrderType) => void
-  onInstructionsChange: (instructions: string) => void // ← AGREGADO: Prop para cambiar instrucciones
-  onMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void
-  onMouseMove: (e: React.MouseEvent<SVGSVGElement>) => void
-  onMouseUp: (e: React.MouseEvent<SVGSVGElement>) => void
-  onUndo: () => void
-  onSave: () => void
-  canUndo: boolean
+  blocks: EditorBlock[];
+  platformCount: number;
+  orderType: OrderType;
+  instructions: string;
+  previewBlock: { x: number; y: number; size: number } | null;
+  svgRef: React.RefObject<SVGSVGElement | null>;
+  onPlatformCountChange: (count: number) => void;
+  onOrderTypeChange: (type: OrderType) => void;
+  onInstructionsChange: (instructions: string) => void;
+  onMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void;
+  onMouseMove: (e: React.MouseEvent<SVGSVGElement>) => void;
+  onMouseUp: (e: React.MouseEvent<SVGSVGElement>) => void;
+  onUndo: () => void;
+  onSave: () => void;
+  canUndo: boolean;
+  onClear: () => void;
 }
 
 export function LevelEditor({
   blocks,
   platformCount,
   orderType,
-  instructions, // ← AGREGADO: Recibir instrucciones
+  instructions,
   previewBlock,
   svgRef,
   onPlatformCountChange,
   onOrderTypeChange,
-  onInstructionsChange, // ← AGREGADO: Recibir función de cambio
+  onInstructionsChange,
   onMouseDown,
   onMouseMove,
   onMouseUp,
   onUndo,
   onSave,
   canUndo,
+  onClear,
 }: LevelEditorProps) {
   const platforms = Array.from({ length: platformCount }, (_, i) => ({
     x: 50 + (i * (GAME_CONFIG.GAME_WIDTH - 100)) / (platformCount - 1) - 100,
     y: 500,
     width: 200,
     height: 20,
-  }))
+  }));
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-      {/* Header */}
       <div className="w-full max-w-4xl bg-black text-white p-4 mb-4 relative">
         <div className="flex justify-between items-start">
           <h1 className="text-3xl font-bold">EDITOR DE NIVELES</h1>
-
           <div className="flex flex-col gap-4">
-            {/* Platform Count */}
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Cantidad de Plataformas</label>
               <input
@@ -69,8 +68,6 @@ export function LevelEditor({
                 className="w-16 px-2 py-1 text-black rounded"
               />
             </div>
-
-            {/* Order Type */}
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium">Tipo de Orden</label>
               <select
@@ -83,8 +80,6 @@ export function LevelEditor({
                 <option value="size">Tamaño</option>
               </select>
             </div>
-
-            {/* ← AGREGADO: Campo de instrucciones */}
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium">Instrucciones del Nivel</label>
               <textarea
@@ -100,7 +95,6 @@ export function LevelEditor({
         </div>
       </div>
 
-      {/* Editor Area */}
       <div className="relative">
         <div
           className="relative bg-gray-200 border-4 border-black cursor-crosshair"
@@ -115,7 +109,6 @@ export function LevelEditor({
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
           >
-            {/* Platforms */}
             {platforms.map((platform, index) => (
               <rect
                 key={index}
@@ -126,8 +119,6 @@ export function LevelEditor({
                 fill="#666"
               />
             ))}
-
-            {/* Existing Blocks */}
             {blocks.map((block) => (
               <g key={block.id}>
                 <rect
@@ -154,8 +145,6 @@ export function LevelEditor({
                 )}
               </g>
             ))}
-
-            {/* Preview Block */}
             {previewBlock && (
               <rect
                 x={previewBlock.x}
@@ -170,31 +159,28 @@ export function LevelEditor({
             )}
           </svg>
         </div>
-
-        {/* Controls */}
         <div className="absolute bottom-4 left-4 flex gap-2">
           <Button onClick={onSave} className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2">
             <Save className="w-4 h-4 mr-2" />
             Guardar nivel
           </Button>
-
           <Button onClick={onUndo} disabled={!canUndo} variant="outline" className="p-2">
             <Undo2 className="w-4 h-4" />
+          </Button>
+          <Button onClick={onClear} variant="destructive" className="p-2">
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>
 
-      {/* Instructions */}
       <div className="mt-4 text-center text-sm text-gray-600 max-w-2xl">
         <p className="mb-2">
-          <strong>Instrucciones:</strong> Mantén presionado el botón izquierdo del mouse y arrastra horizontalmente para
-          crear bloques.
+          <strong>Instrucciones:</strong> Mantén presionado el botón izquierdo del mouse y arrastra horizontalmente para crear bloques.
         </p>
         <p>
-          Los bloques caerán automáticamente sobre las plataformas. Cambia el tipo de orden para actualizar las
-          etiquetas de los bloques existentes.
+          Los bloques caerán automáticamente sobre las plataformas. Cambia el tipo de orden para actualizar las etiquetas existentes.
         </p>
       </div>
     </div>
-  )
+  );
 }

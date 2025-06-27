@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { Button } from "@/components/ui/button";
+import ButtonLogin from "@/components/ui/buttonLogin";
 
 export default function Header() {
   const [user, setUser] = useState<any>(null);
@@ -17,7 +17,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     await signOut(auth);
-    router.push("/login");
+    router.push("/");
   };
 
   const handleLogin = () => router.push("/login");
@@ -30,22 +30,21 @@ export default function Header() {
         {user ? (
           <div className="flex items-center gap-4">
             <span className="text-sm">{user.email}</span>
-            <Button onClick={handleLogout} variant="outline">
+            <ButtonLogin onClick={handleLogout}>
               Cerrar sesión
-            </Button>
+            </ButtonLogin>
           </div>
         ) : (
           <div className="flex gap-2">
-            <Button onClick={handleLogin} className="bg-white text-black hover:bg-gray-300">
+            <ButtonLogin onClick={handleLogin}>
               Iniciar sesión
-            </Button>
-            <Button onClick={handleRegister} variant="outline">
+            </ButtonLogin>
+            <ButtonLogin onClick={handleRegister}>
               Registrarse
-            </Button>
+            </ButtonLogin>
           </div>
         )}
       </div>
     </header>
   );
 }
-
