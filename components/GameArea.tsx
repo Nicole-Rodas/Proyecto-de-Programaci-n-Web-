@@ -1,15 +1,12 @@
-// GameArea.tsx
-import React from 'react'
-import { Block, Crane } from '../types/game'
-import { GAME_CONFIG, PLATFORMS } from '../constants/game'
+import type { Block, Crane } from "../types/game"
+import { GAME_CONFIG, PLATFORMS } from "../constants/game"
 
 interface GameAreaProps {
   crane: Crane
   blocks: Block[]
-  grabbedBlock: Block | null // Definir esta propiedad en las props
 }
 
-export function GameArea({ crane, blocks, grabbedBlock }: GameAreaProps) {
+export function GameArea({ crane, blocks }: GameAreaProps) {
   return (
     <div
       className="relative bg-gray-200 border-4 border-black"
@@ -34,30 +31,32 @@ export function GameArea({ crane, blocks, grabbedBlock }: GameAreaProps) {
         ))}
 
         {blocks.map((block) => (
-          <rect
-            key={block.id}
-            x={block.x}
-            y={block.y}
-            width={block.width}
-            height={block.height}
-            fill={block.color}
-            stroke={block.isGrabbed ? "#fff" : "none"}
-            strokeWidth={block.isGrabbed ? "3" : "0"}
-          />
+          <g key={block.id}>
+            <rect
+              x={block.x}
+              y={block.y}
+              width={block.width}
+              height={block.height}
+              fill={block.color}
+              stroke={block.isGrabbed ? "#fff" : "none"}
+              strokeWidth={block.isGrabbed ? "3" : "0"}
+            />
+            {/* Mostrar etiqueta si existe */}
+            {block.label && (
+              <text
+                x={block.x + block.width / 2}
+                y={block.y + block.height / 2}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize="20"
+                fontWeight="bold"
+                fill="#000"
+              >
+                {block.label}
+              </text>
+            )}
+          </g>
         ))}
-
-        {/* Renderizar el bloque que está siendo agarrado */}
-        {grabbedBlock && (
-          <rect
-            x={grabbedBlock.x}
-            y={grabbedBlock.y}
-            width={grabbedBlock.width}
-            height={grabbedBlock.height}
-            fill={grabbedBlock.color}
-            stroke="#fff"
-            strokeWidth="3"
-          />
-        )}
       </svg>
     </div>
   )

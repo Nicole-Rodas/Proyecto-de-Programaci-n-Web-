@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react"
 import type { Block, Crane } from "../types/game"
+import type { CustomLevel } from "../types/editor"
 import { GAME_CONFIG, INITIAL_BLOCKS, generateRandomBlocks } from "../constants/game"
 import { findDropPosition, checkWinCondition, canGrabBlock } from "../utils/collision"
 
 export function useCraneGame() {
   const [mounted, setMounted] = useState(false)
+  const [isCustomLevel, setIsCustomLevel] = useState(false)
+  const [customOrderType, setCustomOrderType] = useState<string>("")
   const [crane, setCrane] = useState<Crane>({
     x: GAME_CONFIG.GAME_WIDTH / 2,
     y: GAME_CONFIG.CRANE_MIN_Y,
@@ -20,8 +23,11 @@ export function useCraneGame() {
   // Generar bloques aleatorios solo en el cliente
   useEffect(() => {
     setMounted(true)
-    setBlocks(generateRandomBlocks())
-  }, [])
+    // Solo generar bloques aleatorios si no es un nivel personalizado
+    if (!isCustomLevel) {
+      setBlocks(generateRandomBlocks())
+    }
+  }, [isCustomLevel])
 
   const moveCrane = useCallback(
     (direction: "up" | "down" | "left" | "right") => {
@@ -74,7 +80,7 @@ export function useCraneGame() {
             })
 
             setTimeout(() => {
-              if (checkWinCondition(newBlocks)) {
+              if (checkWinCondition(newBlocks, isCustomLevel, customOrderType)) {
                 setGameWon(true)
               }
             }, 100)
@@ -84,13 +90,14 @@ export function useCraneGame() {
         }
         return { ...prev, isGrabbing: false, grabbedBlock: null }
       } else {
+        // Improved grabbing logic with better range for smaller blocks
         const blockToGrab = blocks.find(
           (block) =>
             !block.isGrabbed &&
-            prev.x >= block.x - 10 &&
-            prev.x <= block.x + block.width + 10 &&
-            prev.y >= block.y - 20 &&
-            prev.y <= block.y + block.height + 20 &&
+            prev.x >= block.x - 15 && // Increased horizontal range
+            prev.x <= block.x + block.width + 15 &&
+            prev.y >= block.y - 30 && // Increased vertical range above
+            prev.y <= block.y + block.height + 30 && // Increased vertical range below
             canGrabBlock(block, blocks),
         )
 
@@ -103,7 +110,7 @@ export function useCraneGame() {
         return prev
       }
     })
-  }, [blocks, mounted])
+  }, [blocks, mounted, isCustomLevel, customOrderType])
 
   useEffect(() => {
     if (crane.grabbedBlock && mounted) {
@@ -124,17 +131,71 @@ export function useCraneGame() {
       isGrabbing: false,
       grabbedBlock: null,
     })
-    setBlocks(generateRandomBlocks())
+
+    // Solo generar bloques aleatorios si no es un nivel personalizado
+    if (!isCustomLevel) {
+      setBlocks(generateRandomBlocks())
+    }
     setGameWon(false)
   }
+
+  const startRandomGame = useCallback(() => {
+    if (!mounted) return
+
+    setIsCustomLevel(false)
+    setCustomOrderType("")
+    setCrane({
+      x: GAME_CONFIG.GAME_WIDTH / 2,
+      y: GAME_CONFIG.CRANE_MIN_Y,
+      isGrabbing: false,
+      grabbedBlock: null,
+    })
+    setBlocks(generateRandomBlocks())
+    setGameWon(false)
+  }, [mounted])
+
+  const loadCustomLevel = useCallback(
+    (level: CustomLevel) => {
+      if (!mounted) return
+
+      setIsCustomLevel(true)
+      setCustomOrderType(level.orderType)
+
+      // Convert editor blocks to game blocks with labels
+      const gameBlocks: Block[] = level.blocks.map((editorBlock) => ({
+        id: editorBlock.id,
+        size: editorBlock.size,
+        color: editorBlock.color,
+        x: editorBlock.x,
+        y: editorBlock.y,
+        width: editorBlock.width,
+        height: editorBlock.height,
+        isGrabbed: false,
+        label: editorBlock.label, // Mantener la etiqueta
+      }))
+
+      setBlocks(gameBlocks)
+      setGameWon(false)
+      setCrane({
+        x: GAME_CONFIG.GAME_WIDTH / 2,
+        y: GAME_CONFIG.CRANE_MIN_Y,
+        isGrabbing: false,
+        grabbedBlock: null,
+      })
+    },
+    [mounted],
+  )
 
   return {
     crane,
     blocks,
     gameWon,
     mounted,
+    isCustomLevel,
     moveCrane,
     handleGrabRelease,
     resetGame,
+    startRandomGame,
+    loadCustomLevel,
   }
 }

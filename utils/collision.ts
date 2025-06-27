@@ -69,7 +69,53 @@ export function canGrabBlock(blockToGrab: Block, allBlocks: Block[]): boolean {
   return blocksAbove.length === 0
 }
 
-export function checkWinCondition(blocks: Block[]): boolean {
+// Fix the win condition logic for custom levels
+export function checkWinCondition(blocks: Block[], isCustomLevel = false, orderType?: string): boolean {
+  if (isCustomLevel) {
+    // Para niveles personalizados, verificar si todos los bloques están en orden correcto
+    // en cualquier plataforma
+    for (const platform of PLATFORMS) {
+      const platformBlocks = blocks
+        .filter((block) => block.x >= platform.x - 20 && block.x <= platform.x + GAME_CONFIG.PLATFORM_WIDTH + 20)
+        .sort((a, b) => b.y - a.y) // Sort by Y position (bottom to top)
+
+      if (platformBlocks.length === blocks.length) {
+        // Verificar orden según el tipo
+        let correctOrder = false
+
+        if (orderType === "numeric") {
+          // Para numérico: verificar que las etiquetas estén en orden ascendente de abajo hacia arriba
+          correctOrder = platformBlocks.every((block, index) => {
+            if (index === 0) return true // El primer bloque (más abajo) siempre está bien
+            const currentLabel = Number.parseInt(block.label || "0")
+            const previousLabel = Number.parseInt(platformBlocks[index - 1].label || "0")
+            return currentLabel > previousLabel
+          })
+        } else if (orderType === "alphabetic") {
+          // Para alfabético: verificar que las letras estén en orden alfabético de abajo hacia arriba
+          correctOrder = platformBlocks.every((block, index) => {
+            if (index === 0) return true // El primer bloque (más abajo) siempre está bien
+            const currentLabel = block.label || ""
+            const previousLabel = platformBlocks[index - 1].label || ""
+            return currentLabel > previousLabel
+          })
+        } else {
+          // Para tamaño: verificar que estén en orden por tamaño (más grande abajo)
+          correctOrder = platformBlocks.every((block, index) => {
+            if (index === 0) return true
+            return block.size <= platformBlocks[index - 1].size
+          })
+        }
+
+        if (correctOrder) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  // Lógica original para niveles aleatorios
   for (const platform of PLATFORMS) {
     const platformBlocks = blocks
       .filter((block) => block.x >= platform.x - 20 && block.x <= platform.x + GAME_CONFIG.PLATFORM_WIDTH + 20)

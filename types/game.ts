@@ -7,6 +7,7 @@ export interface Block {
   width: number
   height: number
   isGrabbed: boolean
+  label?: string // Agregar label para bloques personalizados
 }
 
 export interface Crane {
@@ -22,15 +23,12 @@ export interface Platform {
   width: number
   height: number
 }
-// En el archivo `types/game.ts` o donde guardes las interfaces
 
-export interface Block {
-  id: string;        // Identificador único
-  x: number;         // Coordenada x del bloque
-  y: number;         // Coordenada y del bloque
-  width: number;     // Ancho del bloque
-  height: number;    // Altura del bloque
-  color: string;     // Color del bloque
-  size: number;      // Tamaño del bloque (opcional, dependiendo de cómo lo estés utilizando)
-  isGrabbed: boolean; // Si el bloque está siendo agarrado
+export interface CustomLevel {
+  id: string
+  name: string
+  platforms: number
+  blocks: any[] // Replace 'any' with the actual type if available
+  orderType: "numeric" | "alphabetic" | "size"
+  createdAt: Date
 }

@@ -8,7 +8,7 @@ export const GAME_CONFIG = {
   PLATFORM_Y: 500,
   CRANE_SPEED: 5,
   CRANE_MIN_Y: 150,
-  CRANE_MAX_Y: 450,
+  CRANE_MAX_Y: 480, // Increased from 450 to 480 to reach smaller blocks
 } as const
 
 export const PLATFORMS = [

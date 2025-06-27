@@ -1,35 +1,32 @@
+"use client"
+
 import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react"
 
 interface GameHeaderProps {
-  onGrab: () => void  // Para agarrar un bloque
-  onRelease: () => void // Para soltar un bloque
+  onGrabRelease: () => void
   onMove: (direction: "up" | "down" | "left" | "right") => void
-  isGrabbing: boolean  // Estado de si la grúa está agarrando un bloque
 }
 
-export function GameHeader({ onGrab, onRelease, onMove, isGrabbing }: GameHeaderProps) {
+export function GameHeader({ onGrabRelease, onMove }: GameHeaderProps) {
   return (
     <div className="w-full max-w-4xl bg-white border-b-4 border-black p-4 mb-4">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Juego de Garra</h1>
         <div className="flex gap-4 items-center">
-          {/* Botón de "Soltar" */}
-          <div className="flex flex-col items-center cursor-pointer" onClick={onRelease}>
+          <div className="flex flex-col items-center cursor-pointer" onClick={onGrabRelease}>
             <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-700 transition-colors">
               <div className="w-8 h-8 border-4 border-white rounded-full border-t-transparent"></div>
             </div>
             <span className="text-sm font-semibold">Soltar</span>
           </div>
 
-          {/* Botón de "Agarrar" */}
-          <div className="flex flex-col items-center cursor-pointer" onClick={onGrab}>
+          <div className="flex flex-col items-center cursor-pointer" onClick={onGrabRelease}>
             <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center mb-1 hover:bg-gray-700 transition-colors">
               <div className="w-6 h-6 bg-white rounded-full"></div>
             </div>
-            <span className="text-sm font-semibold">{isGrabbing ? "Soltar" : "Agarrar"}</span>
+            <span className="text-sm font-semibold">Agarrar</span>
           </div>
 
-          {/* Controles de movimiento */}
           <div className="grid grid-cols-3 gap-1 w-16 h-16 bg-gray-400 rounded p-1">
             <div></div>
             <div
